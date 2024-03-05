@@ -13,14 +13,22 @@ public class Main {
     public static void main(String[] args) {
         List<String> data = new ArrayList<>();
         SourceRoot sourceRoot = new SourceRoot(CodeGenerationUtils.mavenModuleRoot(Main.class).resolve("src/main/resources"));
-        CompilationUnit cu = sourceRoot.parse("", "Sample.java");
 
-        data.add(String.valueOf(cu.findAll(MethodDeclaration.class).size()));
-        cu.findAll(MethodDeclaration.class).forEach(methodDeclaration -> {
+        //Compilation Unit
+        CompilationUnit unit = sourceRoot.parse("", "Sample.java");
+
+        // Get the number of the declared functions
+        data.add(String.valueOf(unit.findAll(MethodDeclaration.class).size()));
+
+        // Fetch the methods name and store in data
+        unit.findAll(MethodDeclaration.class).forEach(methodDeclaration -> {
             data.add(methodDeclaration.getNameAsString());
         });
 
         File csvFile = new File(sourceRoot.getRoot().toString(), "function_info.csv");
+
+        // Write from data into the file
+
         try (FileWriter writer = new FileWriter(csvFile)) {
             for (String row : data) {
                 writer.write(String.join(",", row) + "\n");
